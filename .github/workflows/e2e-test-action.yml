@@ -1,4 +1,4 @@
-name: e2e-test -ction
+name: e2e-test-action
 run-name: ${{ github.actor }} e2e test GitHub Actions
 on: [push]
 jobs:
