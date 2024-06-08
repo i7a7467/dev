@@ -13,6 +13,8 @@ jobs:
           go-version: '1.22'
       - name: Install go module
         run: go mod download
+      - name: Build app
+        run: go build -o main ./main.go
       - name: start app
         run: ./main &
       - name: Install runn
