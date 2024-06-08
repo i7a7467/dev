@@ -1,13 +1,13 @@
 desc: http test
 runners:
   req:
-    endpoint: https://httpbin.org/
+    endpoint: http://localhost:8080
 debug: false
 steps:
   - 
     desc: health check
     req:
-      /:
+      /health:
         get:
           body: null
     test: |
