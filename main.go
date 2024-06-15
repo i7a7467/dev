@@ -4,11 +4,20 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/i7a7467/dev/db"
 )
 
 func main() {
+
 	helloHandler := func(w http.ResponseWriter, req *http.Request) {
-		io.WriteString(w, "running\n")
+		res , err := db.GetCurrentTime()
+		if err != nil {
+			http.Error(w, "error occured.", http.StatusInternalServerError)
+		} else {
+			w.WriteHeader(http.StatusOK)
+			io.WriteString(w, res + " server running.")
+		}	
 	}
 	http.HandleFunc("/health", helloHandler)
 	log.Println("server start at port 8080")
