@@ -1,6 +1,6 @@
 module github.com/i7a7467/dev
 
-go 1.21.4
+go 1.22.5
 
 require (
 	github.com/uptrace/bun v1.2.1
