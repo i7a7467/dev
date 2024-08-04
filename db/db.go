@@ -39,7 +39,6 @@ func DBConn() (*bun.DB,error) {
 	dbPort := os.Getenv("DB_PORT")
 	// Open a PostgreSQL database.
 	dsn := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",dbUser,dbPass,dbHost,dbPort,dbName)
-	fmt.Println(dsn)
 	pgdb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 
 	// Create a Bun db on top of it.

@@ -32,7 +32,7 @@ jobs:
       - name: start app
         run: ./main &
         env:
-          DB_HOST: postgres
+          DB_HOST: localhost #ランナーマシン上での実行 https://docs.github.com/ja/actions/using-containerized-services/about-service-containers#running-jobs-on-the-runner-machine
           DB_PORT: 5432
           DB_USER: postgres
           DB_PASS: password
