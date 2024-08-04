@@ -31,7 +31,7 @@ func StatusCheckHandler(w http.ResponseWriter, req *http.Request) {
 	ctx := context.Background()
 
 	var res string
-	err = dbConn.NewSelect().ColumnExpr("current_timestamp").Scan(ctx, &res) //result, err := dbConn.NewSelect().Model(&nodejs).ColumnExpr("lower(url)").Where("? = ?", bun.Ident("id"), "42").Scan(ctx)
+	err = dbConn.NewSelect().ColumnExpr("current_timestamp").Scan(ctx, &res)
 
 	if err != nil {
 		http.Error(w, "error occured. get random data", http.StatusInternalServerError)
