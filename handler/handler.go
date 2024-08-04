@@ -2,9 +2,11 @@ package handler
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/i7a7467/dev/db"
 	"github.com/i7a7467/dev/model"
@@ -42,22 +44,33 @@ func StatusCheckHandler(w http.ResponseWriter, req *http.Request) {
 
 func GetOnePersonHandler(w http.ResponseWriter, req *http.Request) {
 
-	dbConn, err := db.DBConn()
+	w.Header().Set("Content-Type", "application/json")
 
+    _ , err := strconv.Atoi(req.PathValue("id"))
 	if err != nil {
-		http.Error(w, "db connection error occured.", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	dbConn, err := db.DBConn()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	person := new(model.Person)
-	if err := dbConn.NewSelect().Model(person).Where("id = ?", req.PathValue("id")).Scan(context.Background()); err != nil {
-		http.Error(w, "error occured. get person data", http.StatusInternalServerError)
+	err = dbConn.NewSelect().Model(person).Where("id = ?", req.PathValue("id")).Scan(context.Background())
+
+	if err == nil {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(person)
+	} else if err == sql.ErrNoRows {
+		// Check no rows in result set.
+		// https://github.com/uptrace/bun/issues/876
+		w.WriteHeader(http.StatusNotFound)
+	} else {
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	if person.Account != "" {
-		json.NewEncoder(w).Encode(person)
-	} else {
-		json.NewEncoder(w).Encode("no data")
-	}
+	return
 }
