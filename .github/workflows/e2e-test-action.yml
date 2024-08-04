@@ -4,6 +4,20 @@ on: [push]
 jobs:
   check-bats-version:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -17,6 +31,12 @@ jobs:
         run: go build -o main ./main.go
       - name: start app
         run: ./main &
+        env:
+          DB_HOST: localhost #ランナーマシン上での実行 https://docs.github.com/ja/actions/using-containerized-services/about-service-containers#running-jobs-on-the-runner-machine
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASS: password
+          DB_NAME: postgres
       - name: Install runn
         run: go install github.com/k1LoW/runn/cmd/runn@latest
       - name: Exec test
