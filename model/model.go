@@ -11,8 +11,8 @@ type Person struct {
 	CreatedAt string `json:"createdAt"`
 }
 
-type Persons struct {
-	bun.BaseModel `bun:"table:person,alias:ps"`
+type Accounts struct {
+	// bun.BaseModel `bun:"table:person,alias:as"`
 
 	Persons []Person
 }

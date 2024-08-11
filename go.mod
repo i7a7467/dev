@@ -3,6 +3,7 @@ module github.com/i7a7467/dev
 go 1.22.5
 
 require (
+	github.com/allegro/bigcache/v3 v3.1.0
 	github.com/uptrace/bun v1.2.1
 	github.com/uptrace/bun/dialect/pgdialect v1.2.1
 	github.com/uptrace/bun/dialect/sqlitedialect v1.2.1
