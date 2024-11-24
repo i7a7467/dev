@@ -1,4 +1,4 @@
 # replace xxxxxxxx for default user
 requirepass xxxxxxxx
-# replace oooooooo and "pppppppp" for connect-user username and password
-user oooooooo on >pppppppp allcommands allkeys
+# replace user and password for test username and password
+user redis on >password allcommands allkeys
