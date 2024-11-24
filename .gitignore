@@ -23,3 +23,6 @@ go.work.sum
 
 # env
 .env
+
+# valkey config
+valkey.conf
