@@ -4,6 +4,9 @@ on: [push]
 jobs:
   check-bats-version:
     runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
     services:
       postgres:
         image: postgres:15
