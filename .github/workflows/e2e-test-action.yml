@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up Valkey
         run:  |
-          sudo apt update && sudo apt-get install valkey -y
+          sudo apt update && sudo apt-get install valkey-cli -y
           echo "ACL SETUSER redis on >password ~* +@all" | valkey-cli
           echo "ACL LIST" | valkey-cli
       - name: Set up Go
