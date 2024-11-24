@@ -104,7 +104,7 @@ func (h *Handler) GetAccountsHandler(w http.ResponseWriter, req *http.Request) {
 
 		accounts := []model.Person{}
 		err = dbConn.NewSelect().Model(&accounts).OrderExpr("id DESC").Limit(10).Scan(context.Background())
-	    if err != nil {
+		if err != nil {
 			http.Error(w, "Failed to get data", http.StatusInternalServerError)
 			return
 		} else {
@@ -116,7 +116,7 @@ func (h *Handler) GetAccountsHandler(w http.ResponseWriter, req *http.Request) {
 				return
 			}
 			if err := h.Cache.SetCache(cacheKey, cacheImportData); err != nil {
-        		fmt.Printf("Failed to set cache. : %v\n", err)
+				fmt.Printf("Failed to set cache. : %v\n", err)
 				return
 			}
 			return
@@ -128,6 +128,41 @@ func (h *Handler) GetAccountsHandler(w http.ResponseWriter, req *http.Request) {
 		w.Write(accountsCache)
 		return
 	}
+}
+
+func (h *Handler) GetLruAccountsHandler(w http.ResponseWriter, req *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	lruCacheKey := req.RequestURI
+	if lruAccount, ok := cache.Get(lruCacheKey); ok {
+        fmt.Printf("Cache hit: %v\n", lruAccount)
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(lruAccount)
+		//io.WriteString(w, lruAccount.(string))
+        return
+    } else {
+		dbConn, err := db.DBConn()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		persons := []model.Person{}
+		err = dbConn.NewSelect().Model(&persons).OrderExpr("account DESC").Limit(10).Scan(context.Background())
+		if err != nil {
+			http.Error(w, "Failed to get data", http.StatusInternalServerError)
+			return
+		} else {
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(&persons)
+			//cacheImportData, err := json.Marshal(&persons)
+			cache.Add(lruCacheKey,persons)
+			//fmt.Printf("Set cache. : %v\n", json.NewEncoder(w).Encode(&persons))
+			return
+		} 
+
+	}
+	
 }
 
 func (h *Handler) CacheTestHandler(w http.ResponseWriter, req *http.Request) {
