@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} e2e test GitHub Actions
 on: [push]
 jobs:
   check-bats-version:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:15
