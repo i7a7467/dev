@@ -37,7 +37,9 @@ func main() {
 	mux.HandleFunc("/lruaccounts", handler.GetLruAccountsHandler) //golang-lru
 
 	// for valkey sample
-	client, err := valkey.NewClient(valkey.ClientOption{InitAddress: []string{os.Getenv("CACHE_DB_HOST") + ":" + os.Getenv("CACHE_DB_PORT")}, Username: os.Getenv("CACHE_DB_USER"), Password: os.Getenv("CACHE_DB_PASS")})
+//	client, err := valkey.NewClient(valkey.ClientOption{InitAddress: []string{os.Getenv("CACHE_DB_HOST") + ":" + os.Getenv("CACHE_DB_PORT")}, Username: os.Getenv("CACHE_DB_USER"), Password: os.Getenv("CACHE_DB_PASS")})
+	client, err := valkey.NewClient(valkey.ClientOption{InitAddress: []string{os.Getenv("CACHE_DB_HOST") + ":" + os.Getenv("CACHE_DB_PORT")}, Password: os.Getenv("CACHE_DB_PASS")})
+
 	if err != nil {
 		panic(err)
 	}
