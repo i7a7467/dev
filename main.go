@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/i7a7467/dev/cache"
@@ -35,21 +36,17 @@ func main() {
 	mux.HandleFunc("/cache", handler.CacheTestHandler)
 	mux.HandleFunc("/lruaccounts", handler.GetLruAccountsHandler) //golang-lru
 
-	client, err := valkey.NewClient(valkey.ClientOption{InitAddress: []string{"127.0.0.1:6379"}})
+	// for valkey sample
+	client, err := valkey.NewClient(valkey.ClientOption{InitAddress: []string{os.Getenv("CACHE_DB_HOST") + ":" + os.Getenv("CACHE_DB_PORT")}, Username: os.Getenv("CACHE_DB_USER"), Password: os.Getenv("CACHE_DB_PASS")})
 	if err != nil {
 		panic(err)
 	}
 	defer client.Close()
 
 	ctx := context.Background()
-	// SET key val NX
-	err = client.Do(ctx, client.B().Set().Key("key2").Value("valuedayo!!").Nx().Build()).Error()
-	// HGETALL hm
-	//hm, err := client.Do(ctx, client.B().Hgetall().Key("hm").Build()).AsStrMap()
-
-	resp, err := client.Do(ctx, client.B().Get().Key("key2").Build()).ToString();
+	err = client.Do(ctx, client.B().Set().Key("key").Value("valuedayo!!").Nx().Build()).Error()
+	resp, err := client.Do(ctx, client.B().Get().Key("key").Build()).ToString();
     fmt.Println(resp)
-
 
 	log.Println("server start at port 8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))
