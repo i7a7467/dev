@@ -18,8 +18,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      redis:
-        image: redis:8
+      valkey:
+        image: valkey:latest
         ports:
           - 6379:6379
         credentials:
