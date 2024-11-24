@@ -27,19 +27,17 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        env:
-          VALKEY_EXTRA_FLAGS: --requirepass password
-          CACHE_DB_HOST: localhost
-          CACHE_DB_PORT: 6379
-          CACHE_DB_USER: redis
-          CACHE_DB_PASS: password
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+      - name: Set up Valkey
+        run:  |
+          echo "ACL SETUSER redis on >password ~* +@all" | valkey-cli
+          echo "ACL LIST" | valkey-cli
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: '1.23'
       - name: Install go module
         run: go mod download
       - name: Build app
@@ -52,6 +50,10 @@ jobs:
           DB_USER: postgres
           DB_PASS: password
           DB_NAME: postgres
+          CACHE_DB_HOST: localhost
+          CACHE_DB_PORT: 6379
+          CACHE_DB_USER: redis
+          CACHE_DB_PASS: password          
       - name: Install runn
         run: go install github.com/k1LoW/runn/cmd/runn@latest
       - name: Exec test
