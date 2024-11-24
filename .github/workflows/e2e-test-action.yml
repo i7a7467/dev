@@ -34,8 +34,6 @@ jobs:
           CACHE_DB_USER: redis
           CACHE_DB_PASS: password
     steps:
-      - name: Run valkey and test
-        run: valkey-server /usr/local/etc/redis/redis.conf
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Set up Go
