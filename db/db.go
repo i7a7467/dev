@@ -48,8 +48,12 @@ func DBConn() (*bun.DB,error) {
 	// Print all queries to stdout.
 	db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
 
-	return db, nil
-
+	err := db.Ping()
+	if err != nil {
+		return db, err
+	} else {
+		return db, nil
+	}
 }
 
 func CacheDBConn() {

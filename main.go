@@ -35,6 +35,7 @@ func main() {
 	mux.HandleFunc("/accounts", handler.GetAccountsHandler) //bigcache
 	mux.HandleFunc("/cache", handler.CacheTestHandler)
 	mux.HandleFunc("/lruaccounts", handler.GetLruAccountsHandler) //golang-lru
+	mux.HandleFunc("/cache/update", handler.CacheUpdateHandler) //for valkey sample
 
 	// for valkey sample
 	client, err := valkey.NewClient(valkey.ClientOption{InitAddress: []string{os.Getenv("CACHE_DB_HOST") + ":" + os.Getenv("CACHE_DB_PORT")}, Username: os.Getenv("CACHE_DB_USER"), Password: os.Getenv("CACHE_DB_PASS")})
