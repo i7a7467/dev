@@ -38,15 +38,17 @@ func (h *Handler) StatusCheckHandler(w http.ResponseWriter, req *http.Request) {
 	dbConn, err := db.DBConn()
 	if err != nil {
 		http.Error(w, "error occured.", http.StatusInternalServerError)
+		return
 	}
 
 	ctx := context.Background()
 
 	var res string
 	err = dbConn.NewSelect().ColumnExpr("current_timestamp").Scan(ctx, &res)
-
 	if err != nil {
 		http.Error(w, "error occured. get random data", http.StatusInternalServerError)
+		return
+		
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -195,5 +197,36 @@ func (h *Handler) CacheTestHandler(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	io.WriteString(w, string(ck))
 	fmt.Printf("cache.Found: %v\n", string(ck))
+	return
+}
+
+func (h *Handler) CacheUpdateHandler(w http.ResponseWriter, req *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	dbConn, err := db.DBConn()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	accounts := []model.Person{}
+	err = dbConn.NewSelect().Model(&accounts).OrderExpr("id ASC").Scan(context.Background())
+	if err != nil {
+		http.Error(w, "Failed to get data", http.StatusInternalServerError)
+		return
+	}
+
+	clinet, err := cache.CacheDBConn()
+	cache.SetValkey(clinet, "key", accounts)
+	fmt.Printf("cache update is success: %v\n", accounts)
+
+	if err != nil {
+		http.Error(w, "Failed to set cache", http.StatusInternalServerError)
+		fmt.Printf("Failed to set cache data . : %v\n", err) // cache 取得エラー
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("cache update is success"))
 	return
 }
